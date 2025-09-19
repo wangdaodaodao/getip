@@ -100,7 +100,7 @@ def main():
         # 将所有链接用换行符连接成一个大字符串
         subscription_text = "\n".join(vless_links)
         
-        # Base64编码
+        # Base64编码吧
         encoded_subscription = base64.b64encode(subscription_text.encode('utf-8')).decode('utf-8')
         
         sub_path = os.path.join(output_dir, 'sub.txt')
