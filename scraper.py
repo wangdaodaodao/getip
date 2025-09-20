@@ -152,7 +152,7 @@ def main():
         custom_links = [link for item in items if (link := create_custom_link_from_item(item))]
         combined_text = "\n".join(custom_links)
         encoded_content = base64.b64encode(combined_text.encode('utf-8')).decode('utf-8')
-        sub_path = os.path.join(output_dir, 'encoded_data.txt')
+        sub_path = os.path.join(output_dir, 'good.txt')
         with open(sub_path, 'w', encoding='utf-8') as f:
             f.write(encoded_content)
         print(f"已将通用编码文件保存到 -> {sub_path}")
