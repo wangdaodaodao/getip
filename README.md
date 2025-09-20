@@ -65,7 +65,7 @@
       with:
         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        projectName: 'wdd-getip' # 【重要】请替换为您的 Cloudflare Pages 项目名
+        projectName: '您的 Cloudflare Pages' # 【重要】请替换为您的 Cloudflare Pages 项目名
         directory: 'public'
         gitHubToken: ${{ secrets.GITHUB_TOKEN }}
     ```
@@ -79,7 +79,7 @@
 1.  **在 Cloudflare 创建 Pages 项目**:
     *   登录 Cloudflare Dashboard。
     *   选择您的账户，然后点击 `Workers & Pages` -> `Create application` -> `Connect to Git`.
-    *   选择您的 GitHub 仓库 `wangdaodaodao/getip`。
+    *   选择您的 GitHub 仓库 `您的 github库名称`。
     *   在构建设置中，`Build command` 可以留空，`Build output directory` 设置为 `public`。
     *   点击 `Save and Deploy`。
 
@@ -97,6 +97,3 @@
 -   **GitHub Actions 首次触发延迟**: 新配置的 `cron` 任务可能不会立即在下一个计划时间触发，有时需要等待一段时间。如果长时间未触发，可以尝试手动触发一次工作流，或稍微修改 `cron` 表达式并提交。
 -   **Cloudflare API Token 权限**: 确保您的 Cloudflare API Token 具有足够的权限来部署 Pages 项目。
 
----
-
-希望这份详细的说明能帮助您更好地使用和维护这个项目！
