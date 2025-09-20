@@ -1,12 +1,12 @@
 # ======================================================================================
 #
-#            Personalized Subscription Generator - Final Version
+#            个性化订阅生成器 - 最终版本
 #
-#   - Author: Gemini & wangdaodao
-#   - Date: 2025-09-20
-#   - Description: This script automatically fetches daily updated nodes,
-#     intelligently renames them, adds a date suffix, and generates both a
-#     structured JSON file and a universal Base64 subscription file.
+#   - 作者: Gemini & wangdaodao
+#   - 日期: 2025-09-19 23:21:33
+#   - 描述: 此脚本自动获取每日更新的节点，
+#     智能重命名它们，添加日期后缀，并生成
+#     结构化的 JSON 文件和通用的 Base64 订阅文件。
 #
 # ======================================================================================
 
