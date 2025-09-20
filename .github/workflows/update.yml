@@ -1,19 +1,10 @@
-# .github/workflows/update.yml
-
-# 工作流的名称
-name: Update Nodes Subscription
+name: Update Data
 
 on:
-  # 触发条件 1: 定时触发
-  # 使用CRON表达式，'30 2 * * *' 表示每天在UTC时间的2点30分执行。
-  # (这大约是北京时间的上午10点30分，您可以根据节点更新的时间自行调整)
   schedule:
-    - cron: '0 22 * * *' # 修改为北京时间早上 6 点 (UTC 22:00)
+    - cron: '0 22 * * *'
 
-  # 触发条件 2: 手动触发
-  # 这允许您在GitHub的Actions页面上，随时手动点击按钮来运行这个流程。
   workflow_dispatch:
-
 
 permissions:
   contents: read
@@ -21,38 +12,29 @@ permissions:
 
 jobs:
   build-and-deploy:
-    # 运行此任务的虚拟机环境
     runs-on: ubuntu-latest
     steps:
-      # 第1步：检出(checkout)您的仓库代码，这样虚拟机里就有您的脚本了
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # 第2步：设置Python 3.10 环境
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      # 第3步：安装 requirements.txt 中定义的依赖库
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 第4步：运行我们的核心爬虫脚本
-      - name: Run Scraper to Generate Subscription File
+      - name: Run Script to Generate Output Files
         run: python scraper.py
 
-      # 第5步：将生成的结果部署到Cloudflare Pages
-      # 这是将 public 文件夹里的 sub.txt 发布出去的关键一步
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
-          # 以下这些信息需要从你下一步在GitHub Secrets中的设置里读取
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          # 【重要】请将这里的 'your-project-name' 替换为您在Cloudflare上创建的项目名
-          projectName: 'wdd-getip' 
-          directory: 'public' # 告诉Cloudflare，我们只部署 'public' 这个文件夹里的内容
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          projectName: 'wdd-getip'
+          directory: 'public'
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}```
