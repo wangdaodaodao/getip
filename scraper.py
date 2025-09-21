@@ -17,7 +17,7 @@ USER_AGENT = 'Mozilla/5.0'
 
 # 定义地区和对应的前缀
 REGIONS = [
-    {"name": "🇺🇸 美国(@未来专属线路-测试1100)", "prefix": "awsall"},
+    {"name": "🇯🇵 日本(@未来专属线路)", "prefix": "awsall"},
     {"name": "🇭🇰 香港", "prefix": "awshk"},
     {"name": "🇯🇵 日本", "prefix": "awsjp"}
 ]
