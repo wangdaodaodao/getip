@@ -56,7 +56,7 @@ def get_latest_post_info(session):
             raise ValueError("未找到最新ID")
         latest_id = match.group(1)
         target_url = f"{BASE_URL}/?id={latest_id}"
-        beijing_time = datetime.datetime.now(datetime.UTC) + datetime.timedelta(hours=8)
+        beijing_time = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=8)
         date_suffix = beijing_time.strftime("%m-%d")
         print(f"获取成功: ID={latest_id}, URL={target_url}, 日期={date_suffix}")
         return target_url, date_suffix
