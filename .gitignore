@@ -1,0 +1,18 @@
+# macOS specific files
+.DS_Store
+
+# Python specific files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python/
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Generated files
+public/*
+# 如果public目录本身也需要被忽略，但通常我们会保留目录结构，只忽略内容
+# public/
