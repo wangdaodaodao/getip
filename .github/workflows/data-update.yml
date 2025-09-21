@@ -3,7 +3,7 @@ name: Update Data
 on:
   schedule:
     # Reregister schedule
-    - cron: '35 3 * * *'
+    - cron: '50 3 * * *'
   workflow_dispatch:
 
 permissions:
