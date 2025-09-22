@@ -1,0 +1,41 @@
+name: Update Scraper4 Data
+
+on:
+  schedule:
+    - cron: '40 12 * * *'  # 每日 19:00 UTC 执行
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  run-scraper4:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Scraper4 to Generate good4.txt
+        run: python scraper4.py
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add public/good4.txt public/data4-*.json
+          if ! git diff --staged --quiet; then
+            git commit -m "Auto-update good4.txt and data4 files"
+            git push
+          else
+            echo "No changes to commit"
+          fi

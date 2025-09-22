@@ -140,8 +140,10 @@ def fetch_parse_and_save(target_url):
         else:
             print(f"目录 {output_dir} 已存在")
 
-        # 将输出文件名改为 .json 后缀，更符合内容格式
-        file_path = os.path.join(output_dir, 'nodes2.json')
+        # 生成带时间戳的文件名
+        timestamp = datetime.datetime.now().strftime("%Y%m%d")
+        json_filename = f"nodes2_{timestamp}.json"
+        file_path = os.path.join(output_dir, json_filename)
         print(f"输出文件路径: {file_path}")
 
         print("正在写入JSON文件...")

@@ -11,6 +11,7 @@ __pycache__/
 # IDE specific files
 .vscode/
 .idea/
+.cache/
 
 # Generated files
 public/*
