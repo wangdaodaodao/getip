@@ -2,7 +2,7 @@ name: Update Scraper5 Data
 
 on:
   schedule:
-    - cron: '15 13 * * *'  # 每日 21:15 UTC+8 执行
+    - cron: '00 17 * * *'  # 6分钟后测试 (21:36 UTC+8)
   workflow_dispatch:
 
 permissions:
