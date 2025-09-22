@@ -2,7 +2,7 @@ name: Update Scraper5 Data
 
 on:
   schedule:
-    - cron: '45 12 * * *'  # 每日 19:00 UTC 执行
+    - cron: '15 13 * * *'  # 每日 21:15 UTC+8 执行
   workflow_dispatch:
 
 permissions:
@@ -32,7 +32,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add public/good5.txt public/data5-*.json
+          git add public/good5.txt 
           git status
           if ! git diff --staged --quiet; then
             git commit -m "Auto-update good5.txt and data5 files"
