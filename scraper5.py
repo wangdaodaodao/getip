@@ -415,7 +415,7 @@ def get_nodesdz_items(session, date_suffix):
         print(f"获取nodesdz.com节点时发生错误: {str(e)}")
         return []
 
-def save_output_files(all_items, output_filename='good4.txt'):
+def save_output_files(all_items, output_filename='good5.txt'):
     """保存节点配置到输出文件"""
     import datetime
     print(f"正在保存输出文件...")
@@ -426,7 +426,7 @@ def save_output_files(all_items, output_filename='good4.txt'):
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     timestamp = (datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))).strftime("%Y%m%d")
 
-    json_filename = f'data4-{timestamp}.json'
+    json_filename = f'data5-{timestamp}.json'
     json_path = os.path.join(OUTPUT_DIR, json_filename)
     with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(unique_items, f, indent=2, ensure_ascii=False)
