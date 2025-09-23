@@ -17,3 +17,6 @@ __pycache__/
 # Generated files
 # 如果public目录本身也需要被忽略，但通常我们会保留目录结构，只忽略内容
 # public/
+
+# JSON files
+*.json
