@@ -3,11 +3,13 @@ from urllib.parse import quote, urlparse
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import datetime
+import datetime as dt
 
 
 
 # --- 全局配置 ---
-BASE_URL = "https://www.freeclashnode.com"
+BASE_URL = "https://clashgithub.com"
+CATEGORY_URL = "https://clashgithub.com/category/clashnode"
 OUTPUT_DIR = 'public'
 USER_AGENT = 'Mozilla/5.0'
 
@@ -56,17 +58,7 @@ def parse_vless_uri(vless_uri):
         if ('🇨🇳' in raw_name or '_CN_' in raw_name or '中国' in raw_name or 'China' in raw_name):
             return None  # 中国节点过滤掉
 
-        # 清理名称中的广告内容
         name = raw_name
-        # 移除完整的广告括号内容
-        import re
-        name = re.sub(r'\(mibei77\.com[^)]*\)', '', name)  # 移除 (mibei77.com...)
-        name = re.sub(r'\(米贝节点分享\)', '', name)      # 移除 (米贝节点分享)
-        # 清理多余的空格和空括号
-        name = re.sub(r'\s+', ' ', name)  # 多空格替换为单空格
-        name = re.sub(r'\(\s*\)', '', name)  # 去除空括号
-        name = re.sub(r'\[\s*\]', '', name)  # 去除空方括号
-        name = name.strip()  # 再次清理首尾空格
 
         # 构建配置
         item = {
@@ -124,16 +116,6 @@ def parse_generic_uri(uri):
                     if ('🇨🇳' in name or '_CN_' in name or '中国' in name or 'China' in name):
                         return None  # 中国节点过滤掉
 
-                    # 清理名称中的广告内容
-                    import re
-                    name = re.sub(r'\(mibei77\.com[^)]*\)', '', name)  # 移除 (mibei77.com...)
-                    name = re.sub(r'\(米贝节点分享\)', '', name)      # 移除 (米贝节点分享)
-                    # 清理多余的空格和空括号
-                    name = re.sub(r'\s+', ' ', name)  # 多空格替换为单空格
-                    name = re.sub(r'\(\s*\)', '', name)  # 去除空括号
-                    name = re.sub(r'\[\s*\]', '', name)  # 去除空方括号
-                    name = name.strip()  # 再次清理首尾空格
-
                     item = {
                         "type": "ss",
                         "server": address,
@@ -162,15 +144,6 @@ def parse_generic_uri(uri):
                     # 过滤中国节点
                     if ('🇨🇳' in name or '_CN_' in name or '中国' in name or 'China' in name):
                         return None  # 中国节点过滤掉
-
-                    # 清理名称中的广告内容
-                    name = name.replace('mibei77.com', '').replace('米贝节点分享', '').strip()
-                    # 清理多余的空格和空括号
-                    import re
-                    name = re.sub(r'\s+', ' ', name)  # 多空格替换为单空格
-                    name = re.sub(r'\(\s*\)', '', name)  # 去除空括号
-                    name = re.sub(r'\[\s*\]', '', name)  # 去除空方括号
-                    name = name.strip()  # 再次清理首尾空格
 
                     item = {
                         "type": "trojan",
@@ -223,15 +196,6 @@ def parse_generic_uri(uri):
                 if ('🇨🇳' in name or '_CN_' in name or '中国' in name or 'China' in name):
                     return None  # 中国节点过滤掉
 
-                # 清理名称中的广告内容
-                name = name.replace('mibei77.com', '').replace('米贝节点分享', '').strip()
-                # 清理多余的空格和空括号
-                import re
-                name = re.sub(r'\s+', ' ', name)  # 多空格替换为单空格
-                name = re.sub(r'\(\s*\)', '', name)  # 去除空括号
-                name = re.sub(r'\[\s*\]', '', name)  # 去除空方括号
-                name = name.strip()  # 再次清理首尾空格
-
                 item = {
                     "type": "vmess",
                     "uuid": uuid,
@@ -265,25 +229,8 @@ def get_nodes_from_txt(session, txt_url, date_suffix=None, quiet=False):
         response = session.get(txt_url, headers={'User-Agent': USER_AGENT}, timeout=15)
         response.raise_for_status()
 
-        # 尝试base64解码内容
-        content = response.text.strip()
-
-        # 检查是否需要base64解码：如果不包含常见协议前缀，可能是编码的
-        has_protocol_prefix = any(prefix in content for prefix in ['ss://', 'vless://', 'trojan://', 'vmess://'])
-
-        if not has_protocol_prefix:
-            try:
-                import base64
-                decoded_content = base64.b64decode(content).decode('utf-8')
-                content = decoded_content
-                if not quiet:
-                    print("base64解码成功，长字符串解码为正常内容")
-            except:
-                if not quiet:
-                    print("base64解码失败，尝试直接解析")
-
         # 解析txt内容
-        total_lines = content.strip().split('\n')
+        total_lines = response.text.strip().split('\n')
         uris = []
         for line in total_lines:
             line = line.strip()
@@ -322,8 +269,8 @@ def get_nodes_from_txt(session, txt_url, date_suffix=None, quiet=False):
                 print(f"解析URL失败: {uri[:50]}..., 错误: {str(e)[:100]}")
                 fail_count += 1
 
-        # 为freeclashnode.com节点添加日期后缀
-        if date_suffix and 'freeclashnode.com' in txt_url:
+        # 为clashgithub.com节点添加日期后缀
+        if date_suffix and 'clashgithub.com' in txt_url:
             final_suffix = f"-{date_suffix.replace('-', '-')}"
             for item in items:
                 item['name'] = f"{item['name']}{final_suffix}"
@@ -342,135 +289,78 @@ def get_nodes_from_txt(session, txt_url, date_suffix=None, quiet=False):
         print(f"获取或解析txt文件失败: {str(e)}")
         return []
 
-def get_freeclash_items(session, date_suffix):
-    """从freeclashnode.com获取节点"""
+def get_clashgithub_items(session, date_suffix):
+    """从clashgithub.com获取节点"""
     try:
+        # 获取主页，查找最新文章URL
         response = session.get(BASE_URL, headers={'User-Agent': USER_AGENT}, timeout=15)
         response.raise_for_status()
 
-        match = re.search(r'<div class="col-md-9 ps-3 item-body">.*?<div class="item-heading pb-2"><a href="([^"]*\d{4}-\d{1,2}-\d{1,2}[^"]*\.htm)"', response.text, re.DOTALL)
-        if not match: return []
+        # 直接取第一个链接（HTML页面按日期倒序排列）
+        clashnode_links = re.findall(r'href="([^"]*clashnode[^"]*html[^"]*)"', response.text)
+        if not clashnode_links:
+            print("未找到文章链接")
+            return []
 
-        target_url = BASE_URL + match.group(1)
-        response = session.get(target_url, headers={'User-Agent': USER_AGENT}, timeout=15)
-        if response.status_code != 200: return []
+        latest_url = clashnode_links[0]  # 第一个就是最新的
+        print(f"使用最新文章: {latest_url.split('/')[-1]}")
 
-        txt_matches = re.findall(r'https://node\.freeclashnode\.com/uploads/\d{4}/\d{2}/\d+[-]\d{8}\.txt', response.text)
-
-        all_items = []
-        for txt_url in txt_matches:
-            all_items.extend(get_nodes_from_txt(session, txt_url, date_suffix, quiet=True))
-        return all_items
-
-    except Exception:
-        return []
-
-def get_nodesdz_items(session, date_suffix):
-    """从nodesdz.com获取最新节点 (完整获取流程)"""
-    try:
-        # 步骤1: 访问主页，获取最新的文章ID
-        print("步骤 1: 获取nodesdz.com主页...")
-        response = session.get("https://nodesdz.com", headers={'User-Agent': USER_AGENT}, timeout=15)
+        # 访问文章提取节点
+        response = session.get(latest_url, headers={'User-Agent': USER_AGENT}, timeout=15)
         response.raise_for_status()
-        print("成功访问nodesdz.com主页")
 
-        # 解析最新的文章链接
-        match = re.search(r'<article class="log">.*?<h3>\s*<a href="https?://.*?/?\?id=(\d+)"', response.text, re.DOTALL)
-        if not match:
-            print("未找到nodesdz.com文章ID")
-            return []
+        # 从页面内容中提取节点链接（vless://, ss://, trojan://, vmess://）
+        uris = []
+        for line in response.text.split('\n'):
+            line = line.strip()
+            if line.startswith('vless://'):
+                uris.append(line.split()[0])  # 只取第一部分，排除HTML
+            elif line.startswith('ss://'):
+                uris.append(line.split()[0])
+            elif line.startswith('trojan://'):
+                uris.append(line.split()[0])
+            elif line.startswith('vmess://'):
+                uris.append(line.split()[0])
 
-        latest_id = match.group(1)
-        target_url = f"https://nodesdz.com/?id={latest_id}"
-        print(f"找到最新文章ID: {latest_id}")
+        # 过滤重复
+        uris = list(set(uris))
 
-        # 步骤2: 访问文章详情页，提取UUID
-        print(f"步骤 2: 访问nodesdz.com文章页面...")
-        print(f"文章URL: {target_url}")
-        response = session.get(target_url, headers={'User-Agent': USER_AGENT}, timeout=15)
-        if response.status_code != 200:
-            print(f"访问文章页面失败: {response.status_code}")
-            return []
+        # 解析每个URI
+        items = []
+        success_count = 0
+        fail_count = 0
 
-        print("成功访问文章页")
+        for uri in uris:
+            try:
+                item = parse_generic_uri(uri)
+                if item:
+                    items.append(item)
+                    success_count += 1
+                else:
+                    fail_count += 1
+            except Exception as e:
+                fail_count += 1
 
-        # 解析页面中的clash下载链接，提取UUID
-        match = re.search(r'clash:\s*".*?/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\.yaml"', response.text)
-        if not match:
-            print("页面中未找到clash下载链接")
-            return []
+        # 为clashgithub.com节点添加日期后缀
+        if date_suffix:
+            final_suffix = f"-{date_suffix.replace('-', '-')}"
+            for item in items:
+                item['name'] = f"{item['name']}{final_suffix}"
 
-        uuid = match.group(1)
-        print(f"成功提取UUID: {uuid}")
+        if success_count > 0:
+            print(f"成功解析了 {success_count} 个节点")
+            for i, item in enumerate(items[:5], 1):
+                print(f"・ {item['name']}")
+        else:
+            print("页面中未找到有效的节点链接")
 
-        # 步骤3: 生成节点配置
-        print("步骤 3: 生成nodesdz.com节点配置...")
-
-        # 为节点添加日期后缀
-        suffix = f"-{date_suffix.replace('-', '-')}" if date_suffix else ""
-
-        nodes = [
-            {
-                "type": "vless",
-                "uuid": uuid,
-                "server": "awsall.freenodes01.cc",
-                "port": 443,
-                "name": f"🇯🇵 日本(@未来专属线路){suffix}",
-                "network": "tcp",
-                "tls": True,
-                "udp": True,
-                "flow": "xtls-rprx-vision",
-                "servername": "www.microsoft.com",
-                "reality-opts": {
-                    "public-key": "0XqnX5cXAa6isFhTW4eIM_CaAHTXJJ8tbMs9XabxJ1A",
-                    "short-id": ""
-                },
-                "client-fingerprint": "chrome"
-            },
-            {
-                "type": "vless",
-                "uuid": uuid,
-                "server": "awshk.freenodes01.cc",
-                "port": 443,
-                "name": f"🇭🇰 香港{suffix}",
-                "network": "tcp",
-                "tls": True,
-                "udp": True,
-                "flow": "xtls-rprx-vision",
-                "servername": "www.microsoft.com",
-                "reality-opts": {
-                    "public-key": "0XqnX5cXAa6isFhTW4eIM_CaAHTXJJ8tbMs9XabxJ1A",
-                    "short-id": ""
-                },
-                "client-fingerprint": "chrome"
-            },
-            {
-                "type": "vless",
-                "uuid": uuid,
-                "server": "awsjp.freenodes01.cc",
-                "port": 443,
-                "name": f"🇯🇵 日本{suffix}",
-                "network": "tcp",
-                "tls": True,
-                "udp": True,
-                "flow": "xtls-rprx-vision",
-                "servername": "www.microsoft.com",
-                "reality-opts": {
-                    "public-key": "0XqnX5cXAa6isFhTW4eIM_CaAHTXJJ8tbMs9XabxJ1A",
-                    "short-id": ""
-                },
-                "client-fingerprint": "chrome"
-            }
-        ]
-
-        print(f"nodesdz.com节点生成完成，共 {len(nodes)} 个节点")
-        return nodes
+        return items
 
     except Exception as e:
-        print(f"获取nodesdz.com节点时发生错误: {str(e)}")
+        print(f"获取clashgithub.com节点时发生错误: {str(e)}")
         return []
 
-def save_output_files(all_items, output_filename='good5.txt'):
+def save_output_files(all_items, output_filename='good6.txt'):
     """保存节点配置到输出文件"""
     import datetime
     print(f"正在保存输出文件...")
@@ -481,7 +371,7 @@ def save_output_files(all_items, output_filename='good5.txt'):
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     timestamp = (datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))).strftime("%Y%m%d")
 
-    json_filename = f'data5-{timestamp}.json'
+    json_filename = f'data6-{timestamp}.json'
     json_path = os.path.join(OUTPUT_DIR, json_filename)
     with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(unique_items, f, indent=2, ensure_ascii=False)
@@ -533,7 +423,7 @@ def save_output_files(all_items, output_filename='good5.txt'):
 def main():
     """主程序入口"""
     print("="*50)
-    print("综合节点更新脚本开始执行")
+    print("从clashgithub.com获取节点脚本开始执行")
     print("="*50)
 
     try:
@@ -543,17 +433,12 @@ def main():
 
         session = setup_session()
 
-        # 获取nodesdz.com节点
-        print("获取nodesdz.com节点...")
-        nodesdz_items = get_nodesdz_items(session, date_suffix)
-        print(f"已添加 {len(nodesdz_items)} 个nodesdz.com节点")
+        # 获取clashgithub.com节点
+        print("获取clashgithub.com节点...")
+        clashgithub_items = get_clashgithub_items(session, date_suffix)
+        print(f"已添加 {len(clashgithub_items)} 个clashgithub.com节点")
 
-        # 获取freeclashnode.com节点
-        print("获取freeclashnode.com节点...")
-        freeclash_items = get_freeclash_items(session, date_suffix)
-        print(f"已添加 {len(freeclash_items)} 个freeclashnode.com节点")
-
-        all_items = nodesdz_items + freeclash_items
+        all_items = clashgithub_items
 
         if all_items:
             save_output_files(all_items)
