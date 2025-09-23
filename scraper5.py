@@ -62,6 +62,11 @@ def parse_vless_uri(vless_uri):
         import re
         name = re.sub(r'\(mibei77\.com[^)]*\)', '', name)  # 移除 (mibei77.com...)
         name = re.sub(r'\(米贝节点分享\)', '', name)      # 移除 (米贝节点分享)
+        # 去掉含有机场的节点
+        if '机场' in name:
+            return None  # 过滤掉含机场的节点
+        # 把含有|@stairnode的都去掉，但是节点保留
+        name = name.replace('|@stairnode', '')
         # 清理多余的空格和空括号
         name = re.sub(r'\s+', ' ', name)  # 多空格替换为单空格
         name = re.sub(r'\(\s*\)', '', name)  # 去除空括号
@@ -128,6 +133,11 @@ def parse_generic_uri(uri):
                     import re
                     name = re.sub(r'\(mibei77\.com[^)]*\)', '', name)  # 移除 (mibei77.com...)
                     name = re.sub(r'\(米贝节点分享\)', '', name)      # 移除 (米贝节点分享)
+                    # 去掉含有机场的节点
+                    if '机场' in name:
+                        return None  # 过滤掉含机场的节点
+                    # 把含有|@stairnode的都去掉，但是节点保留
+                    name = name.replace('|@stairnode', '')
                     # 清理多余的空格和空括号
                     name = re.sub(r'\s+', ' ', name)  # 多空格替换为单空格
                     name = re.sub(r'\(\s*\)', '', name)  # 去除空括号
@@ -165,6 +175,11 @@ def parse_generic_uri(uri):
 
                     # 清理名称中的广告内容
                     name = name.replace('mibei77.com', '').replace('米贝节点分享', '').strip()
+                    # 去掉含有机场的节点
+                    if '机场' in name:
+                        return None  # 过滤掉含机场的节点
+                    # 把含有|@stairnode的都去掉，但是节点保留
+                    name = name.replace('|@stairnode', '')
                     # 清理多余的空格和空括号
                     import re
                     name = re.sub(r'\s+', ' ', name)  # 多空格替换为单空格
@@ -225,6 +240,11 @@ def parse_generic_uri(uri):
 
                 # 清理名称中的广告内容
                 name = name.replace('mibei77.com', '').replace('米贝节点分享', '').strip()
+                # 去掉含有机场的节点
+                if '机场' in name:
+                    return None  # 过滤掉含机场的节点
+                # 把含有|@stairnode的都去掉，但是节点保留
+                name = name.replace('|@stairnode', '')
                 # 清理多余的空格和空括号
                 import re
                 name = re.sub(r'\s+', ' ', name)  # 多空格替换为单空格
