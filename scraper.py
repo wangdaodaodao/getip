@@ -103,14 +103,14 @@ def generate_items_from_template(session, url, date_suffix):
 def create_custom_link(item):
     if item.get("type") != "vless" or 'uuid' not in item or 'server' not in item:
         return None
-    
+
     name = quote(item.get("name", "Unnamed"))
     params = {
         "security": "reality",
         "sni": item.get("servername", ""),
         "fp": item.get("client-fingerprint", "chrome"),
-        "publicKey": item.get("reality-opts", {}).get("public-key", ""),
-        "shortId": item.get("reality-opts", {}).get("short-id", ""),
+        "pbk": item.get("reality-opts", {}).get("public-key", ""),
+        "sid": item.get("reality-opts", {}).get("short-id", ""),
         "flow": item.get("flow", "")
     }
     param_str = '&'.join([f"{k}={v}" for k, v in params.items() if v])
